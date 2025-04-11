@@ -1,123 +1,36 @@
-# Pokémon Tournament Manager (PokéTourneys)
-
-A modern Progressive Web App (PWA) for managing and participating in Pokémon Trading Card Game tournaments. Built with Next.js, Supabase, and Tailwind CSS.
-
-## Features
-
-- **Authentication & Authorization**
-  - Sign up and login system using Supabase Auth
-  - Role-based access (Players and Shops)
-  - Secure session management
-
-- **Player Features**
-  - Account management
-  - Pokémon Player ID tracking
-  - Tournament registration
-  - Deck list submission
-  - Tournament browsing and filtering
-
-- **Shop Features**
-  - Tournament creation and management
-  - Player registration management
-  - Real-time tournament chat
-  - Deck list management
-
-- **Technical Features**
-  - Progressive Web App (PWA) support
-  - Responsive design
-  - Real-time updates
-  - Offline capabilities
-  - Dark mode support
-
-## Prerequisites
-
-- Node.js 18+ and npm
-- Supabase account
-- Git
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/poke-tourneys.git
-   cd poke-tourneys
-   ```
+First, run the development server:
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Set up environment variables:
-   - Copy `.env.local.example` to `.env.local`
-   - Fill in your Supabase credentials:
-     ```
-     NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
-     NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-     ```
-
-4. Set up Supabase:
-   - Create a new Supabase project
-   - Run the SQL migrations in `supabase/migrations/`
-   - Enable the following Supabase features:
-     - Authentication
-     - Realtime
-     - Storage
-
-5. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-6. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Project Structure
-
-```
-poke-tourneys/
-├── app/                    # Next.js app directory
-│   ├── (auth)/            # Authentication routes
-│   ├── (dashboard)/       # Dashboard routes
-│   ├── api/               # API routes
-│   ├── components/        # Reusable components
-│   ├── lib/               # Utility functions
-│   └── types/             # TypeScript types
-├── public/                # Static assets
-├── supabase/             # Supabase configuration
-└── ...config files
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## Development
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run type-check` - Run TypeScript type checking
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Deployment
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-1. Build the application:
-   ```bash
-   npm run build
-   ```
+## Learn More
 
-2. Deploy to your preferred hosting platform (Vercel recommended):
-   ```bash
-   vercel
-   ```
+To learn more about Next.js, take a look at the following resources:
 
-3. Set up environment variables in your hosting platform.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## Contributing
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## Deploy on Vercel
 
-## License
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-# poke-app
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
