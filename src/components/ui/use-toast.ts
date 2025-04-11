@@ -12,5 +12,11 @@ export function useToast() {
         description,
       })
     },
+    success: (message: string) => {
+      sonner.success(message)
+    },
+    error: (message: string) => {
+      sonner.error(message)
+    }
   }
 } 

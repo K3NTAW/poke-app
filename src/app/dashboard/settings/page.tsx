@@ -166,10 +166,16 @@ export default function SettingsPage() {
 
       if (error) throw error
 
-      toast.success("Profile updated successfully")
+      toast({
+        title: "Success",
+        description: "Profile updated successfully"
+      })
     } catch (error) {
       console.error('Error updating profile:', error)
-      toast.error('Failed to update profile')
+      toast({
+        title: "Error", 
+        description: "Failed to update profile"
+      })
     } finally {
       setSaving(false)
     }
@@ -187,7 +193,10 @@ export default function SettingsPage() {
       })
 
       if (signInError) {
-        toast.error("Current password is incorrect")
+        toast({
+          title: "Error",
+          description: "Current password is incorrect"
+        })
         return
       }
 
@@ -198,11 +207,17 @@ export default function SettingsPage() {
 
       if (updateError) throw updateError
 
-      toast.success("Password updated successfully")
+      toast({
+        title: "Success",
+        description: "Password updated successfully"
+      })
       passwordForm.reset()
     } catch (error) {
       console.error('Error updating password:', error)
-      toast.error('Failed to update password')
+      toast({
+        title: "Error",
+        description: "Failed to update password"
+      })
     } finally {
       setSaving(false)
     }
@@ -219,7 +234,10 @@ export default function SettingsPage() {
       if (error) throw error
     } catch (error) {
       console.error(`Error linking ${provider} account:`, error)
-      toast.error(`Failed to link ${provider} account`)
+      toast({
+        title: "Error",
+        description: `Failed to link ${provider} account`
+      })
     }
   }
 
@@ -246,35 +264,24 @@ export default function SettingsPage() {
       const filePath = `${user?.id}/${fileName}`
 
       // Upload the file
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('shop-verification')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
-        })
+        .upload(filePath, file)
 
       if (uploadError) {
         throw uploadError
       }
 
-      if (!data) {
-        throw new Error('Failed to upload image')
-      }
-
-      // Get the URL for the uploaded file
-      const { data: { publicUrl }, error: urlError } = supabase.storage
+      // Get the public URL
+      const { data: urlData } = supabase.storage
         .from('shop-verification')
         .getPublicUrl(filePath)
 
-      if (urlError) {
-        throw urlError
+      if (!urlData) {
+        throw new Error('Failed to get public URL for uploaded image')
       }
-
-      if (!publicUrl) {
-        throw new Error('Failed to get URL for the uploaded image')
-      }
-
-      shopVerificationForm.setValue('shop_image', publicUrl)
+      
+      shopVerificationForm.setValue('shop_image', urlData.publicUrl)
       toast({
         title: "Success",
         description: "Image uploaded successfully.",
@@ -310,8 +317,8 @@ export default function SettingsPage() {
 
       setVerificationStatus('pending')
       toast({
-        title: "Verification Request Submitted",
-        description: "Our team will review your request shortly.",
+        title: "Success",
+        description: `Verification request submitted successfully. We'll review your application and get back to you.`
       })
       setShowVerificationForm(false)
     } catch (error) {
