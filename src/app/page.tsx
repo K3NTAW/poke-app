@@ -4,12 +4,18 @@ import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 import { Icons } from '@/components/ui/icons'
+import { useEffect } from 'react'
 
 export default function Home() {
   const { user, loading } = useAuth()
   const router = useRouter()
+
+  useEffect(() => {
+    if (user && !loading) {
+      router.push('/dashboard')
+    }
+  }, [user, loading, router])
 
   if (loading) {
     return (
@@ -51,44 +57,29 @@ export default function Home() {
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
-              {user ? 'Welcome back!' : 'Welcome'}
+              Welcome
             </h1>
             <p className="text-sm text-muted-foreground">
-              {user ? 'You are logged in!' : 'Please log in to continue'}
+              Please log in to continue
             </p>
           </div>
           <Card>
             <CardContent className="pt-6">
-              {user ? (
-                <div className="space-y-4">
-                  <p className="text-center">Email: {user.email}</p>
-                  <Button
-                    className="w-full"
-                    onClick={async () => {
-                      await supabase.auth.signOut()
-                      router.push('/login')
-                    }}
-                  >
-                    Sign Out
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <Button
-                    className="w-full"
-                    onClick={() => router.push('/login')}
-                  >
-                    Go to Login
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => router.push('/register')}
-                  >
-                    Create an account
-                  </Button>
-                </div>
-              )}
+              <div className="space-y-4">
+                <Button
+                  className="w-full"
+                  onClick={() => router.push('/login')}
+                >
+                  Go to Login
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => router.push('/register')}
+                >
+                  Create an account
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
