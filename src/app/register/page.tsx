@@ -8,11 +8,13 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Icons } from '@/components/ui/icons'
 import Link from 'next/link'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [registrationComplete, setRegistrationComplete] = useState(false)
   const router = useRouter()
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -23,10 +25,15 @@ export default function RegisterPage() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`,
+        }
       })
 
       if (error) throw error
-      router.push('/login')
+      
+      // Show verification message instead of redirecting
+      setRegistrationComplete(true)
     } catch (error) {
       console.error('Error registering:', error)
     } finally {
@@ -43,6 +50,42 @@ export default function RegisterPage() {
     } catch (error) {
       console.error('Error logging in with GitHub:', error)
     }
+  }
+
+  // If registration is complete, show verification message
+  if (registrationComplete) {
+    return (
+      <div className="container max-w-md mx-auto mt-20 p-6">
+        <Card>
+          <CardContent className="pt-6 space-y-4">
+            <div className="flex justify-center">
+              <Icons.mail className="h-12 w-12 text-primary" />
+            </div>
+            <h1 className="text-2xl font-semibold tracking-tight text-center">
+              Check your email
+            </h1>
+            <Alert>
+              <Icons.info className="h-4 w-4" />
+              <AlertTitle>Verification Required</AlertTitle>
+              <AlertDescription>
+                We&apos;ve sent a verification link to <strong>{email}</strong>.
+                Please check your inbox and click the link to verify your account.
+              </AlertDescription>
+            </Alert>
+            <p className="text-center text-sm text-muted-foreground">
+              After verification, you can log in to your account.
+            </p>
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={() => router.push('/login')}
+            >
+              Go to Login
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (

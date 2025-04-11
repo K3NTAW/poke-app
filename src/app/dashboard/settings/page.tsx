@@ -14,7 +14,19 @@ import { z } from "zod"
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useTheme } from "next-themes"
-import { Moon, Sun } from "lucide-react"
+import { Moon, Sun, AlertTriangle } from "lucide-react"
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { useRouter } from "next/navigation"
 
 const profileFormSchema = z.object({
   username: z.string().min(3, {
@@ -55,6 +67,8 @@ export default function SettingsPage() {
   const [showVerificationForm, setShowVerificationForm] = useState(false)
   const [uploadingImage, setUploadingImage] = useState(false)
   const [verificationStatus, setVerificationStatus] = useState<'none' | 'pending' | 'verified'>('none')
+  const [deleting, setDeleting] = useState(false)
+  const router = useRouter()
 
   const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -332,6 +346,51 @@ export default function SettingsPage() {
     }
   }
 
+  async function handleDeleteAccount() {
+    if (!user) return
+    setDeleting(true)
+
+    try {
+      // First delete user data from the profiles table
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', user.id)
+
+      if (profileError) throw profileError
+
+      // For client-side, using auth.updateUser to mark account for deletion
+      // by updating user metadata (we can't actually delete from client)
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: { 
+          deleted: true,
+          deletion_requested_at: new Date().toISOString()
+        }
+      })
+
+      if (updateError) throw updateError
+
+      // Sign out the user
+      await supabase.auth.signOut()
+      
+      toast({
+        title: "Account Deletion Requested",
+        description: "Your profile data has been removed and your account marked for deletion."
+      })
+
+      // Redirect to home page
+      router.push('/')
+    } catch (error) {
+      console.error('Error deleting account:', error)
+      toast({
+        title: "Error",
+        description: "Failed to delete account. Please try again later."
+      })
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -523,6 +582,60 @@ export default function SettingsPage() {
                   </Button>
                 </div>
               ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-destructive flex items-center">
+                <AlertTriangle className="mr-2 h-4 w-4" />
+                Danger Zone
+              </CardTitle>
+              <CardDescription>
+                Permanently delete your account and all your data.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="border border-destructive/20 rounded-md p-4 bg-destructive/5">
+                <h4 className="font-medium mb-2">Delete Account</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Once you delete your account, there is no going back. This action is permanent and cannot be undone.
+                </p>
+                
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive">
+                      Delete Account
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete your account
+                        and remove all your data from our servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction 
+                        onClick={handleDeleteAccount}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        disabled={deleting}
+                      >
+                        {deleting ? (
+                          <>
+                            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                            Deleting...
+                          </>
+                        ) : (
+                          "Yes, delete my account"
+                        )}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

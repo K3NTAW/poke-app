@@ -12,6 +12,7 @@ import {
   Activity,
   Check,
   Clock,
+  Info,
 } from "lucide-react"
 
 export const Icons = {
@@ -28,4 +29,5 @@ export const Icons = {
   activity: Activity,
   check: Check,
   clock: Clock,
+  info: Info,
 } 
