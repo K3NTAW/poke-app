@@ -14,6 +14,7 @@ import { Icons } from '@/components/ui/icons'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { Analytics } from "@vercel/analytics/react"
 
 export default function DashboardLayout({
   children,
